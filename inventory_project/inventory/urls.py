@@ -9,6 +9,8 @@ urlpatterns = [
     path('transactions/', views.transaction_list),
     path('products/low-stock/', views.low_stock_products),
     path('products/<int:product_id>/history/', views.stock_history, name='stock-history'),
+    path('products/export/csv/', views.export_products_csv, name='export-products-csv'),
+
 
     
 ]

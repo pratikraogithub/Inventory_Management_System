@@ -12,6 +12,9 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAdminUser
 from rest_framework.pagination import PageNumberPagination
 
+import csv
+from django.http import HttpResponse
+
 
 # ----- SUPPLIER VIEWS -----
 @api_view(['GET', 'POST'])
@@ -182,3 +185,27 @@ def stock_history(request, product_id):
     history = StockHistory.objects.filter(product_id=product_id).order_by('-changed_at')
     serializer = StockHistorySerializer(history, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def export_products_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="products.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Name', 'SKU', 'Quantity', 'Price', 'Supplier', 'Last Updated'])
+
+    products = Product.objects.select_related('supplier').all()
+    for product in products:
+        writer.writerow([
+            product.id,
+            product.name,
+            product.sku,
+            product.quantity,
+            product.price,
+            product.supplier.name if product.supplier else '',
+            product.last_updated.strftime('%Y-%m-%d %H:%M:%S')
+        ])
+
+    return response
