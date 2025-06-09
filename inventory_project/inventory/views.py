@@ -50,8 +50,14 @@ def supplier_detail(request, pk):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
+        # Check if supplier is linked to any active products
+        if Product.objects.filter(supplier=supplier, is_active=True).exists():
+            return Response(
+                {"error": "Cannot delete supplier with active products."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         supplier.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Supplier deleted successfully."}, status=204)
 
 # ----- PRODUCT VIEWS -----
 
@@ -59,7 +65,7 @@ def supplier_detail(request, pk):
 @permission_classes([IsAuthenticated])
 def product_list(request):
     if request.method == 'GET':
-        products = Product.objects.all()
+        products = Product.objects.filter(is_active=True)
 
         # Search filters
         name = request.GET.get('name')
@@ -90,27 +96,7 @@ def product_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'GET':
-        supplier_id = request.GET.get('supplier')
-        products = Product.objects.all()
-        if supplier_id:
-            products = products.filter(supplier__id=supplier_id)
-
-        # Pagination setup
-        paginator = PageNumberPagination()
-        paginator.page_size = 10  # items per page
-        result_page = paginator.paginate_queryset(products, request)
-
-        serializer = ProductSerializer(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)
-
-    elif request.method == 'POST':
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+   
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def product_detail(request, pk):
@@ -129,8 +115,10 @@ def product_detail(request, pk):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        product.is_active = False
+        product.save()
+        return Response({"message": "Product archived (soft deleted)"}, status=204)
+        # return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ----- TRANSACTION VIEWS -----
 @api_view(['GET', 'POST'])
@@ -209,3 +197,21 @@ def export_products_csv(request):
         ])
 
     return response
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def archived_products(request):
+    archived = Product.objects.filter(is_active=False)
+    serializer = ProductSerializer(archived, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def restore_product(request, pk):
+    try:
+        product = Product.objects.get(pk=pk, is_active=False)
+        product.is_active = True
+        product.save()
+        return Response({"message": "Product restored."})
+    except Product.DoesNotExist:
+        return Response({"error": "Product not found or already active"}, status=404)

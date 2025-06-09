@@ -21,6 +21,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     supplier = models.ForeignKey('Supplier', on_delete=models.SET_NULL, null=True, blank=True)
     last_updated = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)  # 👈 soft delete flag
 
     def __str__(self):
         return self.name
