@@ -98,12 +98,7 @@ npm run dev
 
 ## 📸 Screenshots (Optional)  
 
-- Login Page  
-- Dashboard  
-- Product List with Actions  
-- Archived Products  
 
----
 - Login Page
 ![image1](./images/image1.png)
 
@@ -115,6 +110,7 @@ npm run dev
 
 - Archived Products 
 ![image1](./images/image4.png)
+
 
 ## 🚀 Future Enhancements  
 
