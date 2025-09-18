@@ -96,19 +96,19 @@ npm run dev
 
 ---
 
-## 📸 Screenshots (Optional)  
+## 📸 Screenshots  
 
 
-- Login Page
+### Login Page
 ![image1](./images/image1.png)
 
-- Dashboard
+### Dashboard
 ![image1](./images/image2.png)
 
-- Product List with Actions
+### Product List with Actions
 ![image1](./images/image3.png)
 
-- Archived Products 
+### Archived Products 
 ![image1](./images/image4.png)
 
 
