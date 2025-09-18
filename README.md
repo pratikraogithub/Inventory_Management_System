@@ -104,6 +104,17 @@ npm run dev
 - Archived Products  
 
 ---
+- Login Page
+![image1](./images/image1.png)
+
+- Dashboard
+![image1](./images/image2.png)
+
+- Product List with Actions
+![image1](./images/image3.png)
+
+- Archived Products 
+![image1](./images/image4.png)
 
 ## 🚀 Future Enhancements  
 
