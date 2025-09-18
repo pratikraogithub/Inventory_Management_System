@@ -1,4 +1,3 @@
-// components/LoginForm.jsx
 import { useState } from 'react';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
@@ -19,17 +18,39 @@ export default function LoginForm() {
     };
 
     return (
-        <form onSubmit={handleLogin} className="container mt-5 col-md-4">
-            <h3>Login</h3>
-            <input className="form-control mb-2" type="text" placeholder="Username"
-                value={credentials.username}
-                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-            />
-            <input className="form-control mb-2" type="password" placeholder="Password"
-                value={credentials.password}
-                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-            />
-            <button className="btn btn-primary">Login</button>
-        </form>
+        <div className="container vh-100 d-flex justify-content-center align-items-center">
+            <div className="card shadow p-4 w-100" style={{ maxWidth: '500px' }}>
+                <h3 className="mb-4 text-center">Login</h3>
+                <form onSubmit={handleLogin}>
+                    <div className="mb-3">
+                        <label htmlFor="username" className="form-label visually-hidden">Username</label>
+                        <input
+                            id="username"
+                            className="form-control form-control-lg"
+                            type="text"
+                            placeholder="Enter username"
+                            value={credentials.username}
+                            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label htmlFor="password" className="form-label visually-hidden">Password</label>
+                        <input
+                            id="password"
+                            className="form-control form-control-lg"
+                            type="password"
+                            placeholder="Enter password"
+                            value={credentials.password}
+                            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                            required
+                        />
+                    </div>
+
+                    <button className="btn btn-primary btn-lg w-100" type="submit">Login</button>
+                </form>
+            </div>
+        </div>
     );
 }

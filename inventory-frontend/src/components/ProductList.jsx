@@ -95,8 +95,8 @@ export default function ProductList({ onEdit }) {
                             <td>{p.price}</td>
                             <td>{p.supplier?.name}</td>
                             <td>
-                                <button className="btn btn-sm btn-outline-primary" onClick={() => onEdit(p)}>Edit</button>
-                                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p.id)}>Delete</button>
+                                <button className="btn btn-sm btn-outline-primary m-2   " onClick={() => onEdit(p)}>Edit</button>
+                                <button className="btn btn-sm btn-outline-danger m-2" onClick={() => handleDelete(p.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
