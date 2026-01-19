@@ -1,55 +1,96 @@
-import { useState } from 'react';
-import api from '../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import api from "../utils/api";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaLock } from "react-icons/fa";
+import "./LoginForm.css";
 
 export default function LoginForm() {
-    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [credentials, setCredentials] = useState({ username: "", password: "" });
+    const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             const res = await api.post('token/', credentials);
-            localStorage.setItem('token', res.data.access);
-            navigate('/dashboard');
+            localStorage.setItem('access', res.data.access);
+            localStorage.setItem('refresh', res.data.refresh);
+            navigate("/dashboard");
         } catch (err) {
-            alert('Invalid credentials');
+            setError("Invalid username or password. Please try again.");
         }
     };
 
     return (
-        <div className="container vh-100 d-flex justify-content-center align-items-center">
-            <div className="card shadow p-4 w-100" style={{ maxWidth: '500px' }}>
-                <h3 className="mb-4 text-center">Login</h3>
-                <form onSubmit={handleLogin}>
-                    <div className="mb-3">
-                        <label htmlFor="username" className="form-label visually-hidden">Username</label>
-                        <input
-                            id="username"
-                            className="form-control form-control-lg"
-                            type="text"
-                            placeholder="Enter username"
-                            value={credentials.username}
-                            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                            required
-                        />
-                    </div>
+        <div className="login-page">
+            {/* Left side with branding + image */}
+            <div className="login-left">
+                <div className="overlay-text">
+                    <h1>📦 Inventory Manager</h1>
+                    <p>Track, Manage & Simplify Your Stock</p>
+                </div>
+            </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label visually-hidden">Password</label>
-                        <input
-                            id="password"
-                            className="form-control form-control-lg"
-                            type="password"
-                            placeholder="Enter password"
-                            value={credentials.password}
-                            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                            required
-                        />
-                    </div>
+            {/* Right side with form */}
+            <div className="login-right">
+                <div className="login-header-text">
+                    <h2>Welcome Back!</h2>
+                    <p>Please sign in to your account to continue</p>
+                </div>
 
-                    <button className="btn btn-primary btn-lg w-100" type="submit">Login</button>
-                </form>
+                <div className="login-form-container">
+
+                    <h2 className="fw-bold mb-4 text-center">Login</h2>
+                    {error && <div className="alert alert-danger">{error}</div>}
+                    <form onSubmit={handleLogin}>
+                        <div className="mb-3 input-group">
+                            <span className="input-group-text bg-primary text-white">
+                                <FaUser />
+                            </span>
+                            <input
+                                type="text"
+                                className="form-control form-control-lg"
+                                placeholder="Username"
+                                value={credentials.username}
+                                onChange={(e) =>
+                                    setCredentials({ ...credentials, username: e.target.value })
+                                }
+                                required
+                            />
+                        </div>
+
+                        <div className="mb-3 input-group">
+                            <span className="input-group-text bg-primary text-white">
+                                <FaLock />
+                            </span>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="form-control form-control-lg"
+                                placeholder="Password"
+                                value={credentials.password}
+                                onChange={(e) =>
+                                    setCredentials({ ...credentials, password: e.target.value })
+                                }
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? "Hide" : "Show"}
+                            </button>
+                        </div>
+
+                        <button className="btn btn-primary btn-lg w-100 mt-2" type="submit">
+                            Login
+                        </button>
+                    </form>
+                    <div className="text-center mt-3">
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                </div>
             </div>
         </div>
     );

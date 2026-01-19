@@ -1,0 +1,299 @@
+/* Split-screen layout */
+.login-page {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Left side: image takes 60% of width */
+.login-left {
+    flex: 6;
+    /* 60% of width */
+    background: url("./src/assets/inventory_image.webp") no-repeat center center/cover;
+    position: relative;
+    color: white;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 3rem;
+    min-width: 50%;
+}
+
+.login-left::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-text {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    opacity: 0.9;
+    padding: 0 2rem;
+    max-width: 80%;
+}
+
+.overlay-text h1 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.overlay-text p {
+    font-size: 0.9rem;
+    margin-top: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    line-height: 1.4;
+}
+
+/* Right side: form takes 40% of width - REMOVED max-width constraint */
+.login-right {
+    flex: 5;
+    /* 40% of width */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f7f9fc;
+    padding: 3rem;
+    /* Increased padding for more space */
+    min-width: 40%;
+    /* Ensure minimum width */
+    /* REMOVED: max-width: 450px - This was limiting expansion */
+}
+
+/* Header text above the form card */
+.login-header-text {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+    width: 100%;
+    max-width: 500px;
+    /* Allow header to take more width */
+}
+
+.login-header-text h2 {
+    font-size: 2.2rem;
+    /* Slightly larger */
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.login-header-text p {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.login-form-container {
+    background: #fff;
+    padding: 2.5rem;
+    /* Increased padding */
+    border-radius: 15px;
+    /* Slightly larger radius */
+    width: 100%;
+    max-width: 500px;
+    /* Increased max-width for form */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Enhanced Form styling */
+.input-group {
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+}
+
+.input-group:focus-within {
+    border-color: #6e8efb;
+    box-shadow: 0 0 0 0.3rem rgba(110, 142, 251, 0.15);
+}
+
+.input-group-text {
+    background: linear-gradient(90deg, #6e8efb, #a777e3);
+    border: none;
+    color: white;
+    min-width: 55px;
+    /* Slightly wider */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.form-control {
+    border: none;
+    padding: 1rem;
+    /* More padding */
+    font-size: 1rem;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+/* Enhanced Buttons */
+.btn-primary {
+    background: linear-gradient(90deg, #6e8efb, #a777e3);
+    border: none;
+    padding: 1rem;
+    /* More padding */
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(110, 142, 251, 0.4);
+}
+
+.btn-outline-secondary {
+    border-left: none;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Additional content to utilize more space */
+.features-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+    width: 100%;
+    max-width: 500px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.feature-icon {
+    color: #6e8efb;
+    font-size: 1rem;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .login-left {
+        flex: 5;
+        /* Adjust ratio */
+    }
+
+    .login-right {
+        flex: 5;
+        /* More balanced */
+    }
+}
+
+@media (max-width: 992px) {
+    .login-left {
+        flex: 4;
+    }
+
+    .login-right {
+        flex: 6;
+        /* Right side takes more space on tablets */
+        padding: 2rem;
+    }
+
+    .login-form-container {
+        max-width: 450px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-page {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .login-left {
+        flex: none;
+        height: 35vh;
+        min-height: 250px;
+        width: 100%;
+        padding-top: 2rem;
+    }
+
+    .login-right {
+        flex: none;
+        width: 100%;
+        min-width: auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .login-form-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .login-header-text h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-right {
+        padding: 1.5rem 1rem;
+    }
+
+    .login-form-container {
+        padding: 2rem;
+    }
+
+    .login-header-text h2 {
+        font-size: 1.8rem;
+    }
+
+    .features-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+    }
+}
+
+/* Ensure both sides utilize available space properly */
+.login-page>* {
+    flex-shrink: 0;
+    /* Prevent shrinking */
+}

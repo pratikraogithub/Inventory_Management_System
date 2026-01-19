@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 EXTERNAL_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'inventory',
     'corsheaders',
 ]
@@ -138,4 +139,13 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,  # 10 items per page
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),   # default 5m → 15m
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),     # default 1d → 7d
+    "ROTATE_REFRESH_TOKENS": True,                   # issue new refresh on use
+    "BLACKLIST_AFTER_ROTATION": True,                # invalidate old refresh
 }

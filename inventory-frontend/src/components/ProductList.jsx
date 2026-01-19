@@ -1,17 +1,16 @@
-// src/components/ProductList.jsx
-import { useEffect, useState } from 'react';
-import api from '../utils/api';
+import { useEffect, useState } from "react";
+import api from "../utils/api";
+import Drawer from "./Drawer"; // import drawer
 
 export default function ProductList({ onEdit }) {
     const [products, setProducts] = useState([]);
 
     const fetchProducts = async () => {
         try {
-            const res = await api.get('products/');
-            console.log(res.data);
+            const res = await api.get("products/");
             setProducts(res.data.results);
         } catch (error) {
-            console.error('Error fetching products:', error);
+            console.error("Error fetching products:", error);
             setProducts([]);
         }
     };
@@ -21,47 +20,42 @@ export default function ProductList({ onEdit }) {
     }, []);
 
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
+        if (window.confirm("Are you sure you want to delete this product?")) {
             try {
                 await api.delete(`products/${id}/`);
-                fetchProducts(); // Refresh product list
-                alert('✅ Product deleted successfully');
+                fetchProducts();
+                alert("✅ Product deleted successfully");
             } catch (err) {
                 console.error(err);
-                alert('Failed to delete product');
+                alert("Failed to delete product");
             }
         }
     };
 
     const downloadCSV = () => {
         if (!products.length) {
-            alert('No products to export.');
+            alert("No products to export.");
             return;
         }
 
-        // Headers for CSV file
-        const headers = ['ID', 'Name', 'SKU', 'Quantity', 'Price', 'Supplier'];
-
-        // Map product data to rows
-        const rows = products.map(p => [
+        const headers = ["ID", "Name", "SKU", "Quantity", "Price", "Supplier"];
+        const rows = products.map((p) => [
             p.id,
             p.name,
             p.sku,
             p.quantity,
             p.price,
-            p.supplier?.name || '',
+            p.supplier?.name || "",
         ]);
 
-        // Create CSV content string
         const csvContent =
-            'data:text/csv;charset=utf-8,' +
-            [headers, ...rows].map(e => e.join(',')).join('\n');
+            "data:text/csv;charset=utf-8," +
+            [headers, ...rows].map((e) => e.join(",")).join("\n");
 
-        // Create a download link and trigger it
         const encodedUri = encodeURI(csvContent);
-        const link = document.createElement('a');
-        link.setAttribute('href', encodedUri);
-        link.setAttribute('download', 'product_list.csv');
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "product_list.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -69,6 +63,9 @@ export default function ProductList({ onEdit }) {
 
     return (
         <div className="mt-4">
+            {/* 🔹 Burger Drawer */}
+            <Drawer />
+
             <h4>Products</h4>
 
             <button className="btn btn-secondary mb-3" onClick={downloadCSV}>
@@ -87,19 +84,30 @@ export default function ProductList({ onEdit }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {Array.isArray(products) && products.map((p) => (
-                        <tr key={p.id}>
-                            <td>{p.name}</td>
-                            <td>{p.sku}</td>
-                            <td>{p.quantity}</td>
-                            <td>{p.price}</td>
-                            <td>{p.supplier?.name}</td>
-                            <td>
-                                <button className="btn btn-sm btn-outline-primary m-2   " onClick={() => onEdit(p)}>Edit</button>
-                                <button className="btn btn-sm btn-outline-danger m-2" onClick={() => handleDelete(p.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
+                    {Array.isArray(products) &&
+                        products.map((p) => (
+                            <tr key={p.id}>
+                                <td>{p.name}</td>
+                                <td>{p.sku}</td>
+                                <td>{p.quantity}</td>
+                                <td>{p.price}</td>
+                                <td>{p.supplier?.name}</td>
+                                <td>
+                                    <button
+                                        className="btn btn-sm btn-outline-primary m-2"
+                                        onClick={() => onEdit(p)}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        className="btn btn-sm btn-outline-danger m-2"
+                                        onClick={() => handleDelete(p.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>
