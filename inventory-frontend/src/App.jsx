@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
-import Dashboard from './Pages/Dashboard';
+import Dashboard from './pages/Dashboard';
 import ArchivedProducts from './pages/ArchivedProducts';
 
 function App() {
