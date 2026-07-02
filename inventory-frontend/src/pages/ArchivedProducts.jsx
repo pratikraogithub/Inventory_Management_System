@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api'; // axios instance with baseURL and auth
 
 const ArchivedProducts = () => {
     const [archived, setArchived] = useState([]);
@@ -8,31 +8,12 @@ const ArchivedProducts = () => {
     const [sortField, setSortField] = useState('name');
     const [sortOrder, setSortOrder] = useState('asc');
 
-    const token = localStorage.getItem('token'); // Optional if you're using auth
-
+    // Fetch archived products
     const fetchArchived = async () => {
+        setLoading(true);
         try {
-            const response = await axios.get('http://localhost:8000/api/archived-products/', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (
-                response.headers['content-type']?.includes('application/json')
-            ) {
-                if (Array.isArray(response.data)) {
-                    setArchived(response.data);
-                } else if (response.data.results) {
-                    setArchived(response.data.results);
-                } else {
-                    console.warn('Unexpected response format:', response.data);
-                    setArchived([]);
-                }
-            } else {
-                console.warn('Non-JSON response received:', response.data);
-                setArchived([]);
-            }
+            const response = await api.get('/products/archived/'); // Make sure baseURL is set in api.js
+            setArchived(response.data);
         } catch (error) {
             console.error('Error fetching archived products:', error);
             setArchived([]);
@@ -41,29 +22,23 @@ const ArchivedProducts = () => {
         }
     };
 
+    // Restore single product
     const handleRestore = async (id) => {
         try {
-            await axios.post(`http://localhost:8000/api/products/${id}/restore/`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setArchived(prev => prev.filter(p => p.id !== id));
+            await api.post(`products/${id}/restore/`);
+            setArchived((prev) => prev.filter((p) => p.id !== id));
         } catch (error) {
             console.error('Error restoring product:', error);
+            alert('Failed to restore product');
         }
     };
 
+    // Restore all products
     const handleRestoreAll = async () => {
-        const promises = archived.map(product =>
-            axios.post(`http://localhost:8000/api/products/${product.id}/restore/`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-        );
         try {
-            await Promise.all(promises);
+            await Promise.all(
+                archived.map((product) => api.post(`/products/${product.id}/restore/`))
+            );
             alert('All products restored!');
             setArchived([]);
         } catch (error) {
@@ -72,51 +47,36 @@ const ArchivedProducts = () => {
         }
     };
 
+    // Sorting
     const handleSort = (field) => {
-        if (field === sortField) {
-            setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
-        } else {
+        if (field === sortField) setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+        else {
             setSortField(field);
             setSortOrder('asc');
         }
     };
 
     const sortedProducts = [...archived]
-        .filter(product =>
+        .filter((product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .sort((a, b) => {
             const aVal = a[sortField];
             const bVal = b[sortField];
-            if (typeof aVal === 'string') {
-                return sortOrder === 'asc'
-                    ? aVal.localeCompare(bVal)
-                    : bVal.localeCompare(aVal);
-            }
+            if (typeof aVal === 'string') return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
             return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
         });
 
+    // CSV download
     const downloadCSV = () => {
-        if (!archived.length) {
-            alert('No data to export.');
-            return;
-        }
+        if (!archived.length) return alert('No data to export.');
 
         const headers = ['ID', 'Name', 'SKU', 'Quantity'];
-        const rows = archived.map(product => [
-            product.id,
-            product.name,
-            product.sku,
-            product.quantity,
-        ]);
+        const rows = archived.map((product) => [product.id, product.name, product.sku, product.quantity]);
+        const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].map((e) => e.join(',')).join('\n');
 
-        const csvContent =
-            'data:text/csv;charset=utf-8,' +
-            [headers, ...rows].map(e => e.join(',')).join('\n');
-
-        const encodedUri = encodeURI(csvContent);
         const link = document.createElement('a');
-        link.setAttribute('href', encodedUri);
+        link.setAttribute('href', encodeURI(csvContent));
         link.setAttribute('download', 'archived_products.csv');
         document.body.appendChild(link);
         link.click();
@@ -171,16 +131,13 @@ const ArchivedProducts = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedProducts.map(product => (
+                        {sortedProducts.map((product) => (
                             <tr key={product.id}>
                                 <td>{product.name}</td>
                                 <td>{product.sku}</td>
                                 <td>{product.quantity}</td>
                                 <td>
-                                    <button
-                                        className="btn btn-success btn-sm"
-                                        onClick={() => handleRestore(product.id)}
-                                    >
+                                    <button className="btn btn-success btn-sm" onClick={() => handleRestore(product.id)}>
                                         Restore
                                     </button>
                                 </td>

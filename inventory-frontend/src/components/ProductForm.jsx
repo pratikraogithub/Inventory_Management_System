@@ -13,7 +13,7 @@ export default function ProductForm({ selectedProduct, onSaved }) {
 
     const fetchSuppliers = async () => {
         const res = await api.get('suppliers/');
-        setSuppliers(res.data);
+        setSuppliers(res.data.results);
     };
 
     useEffect(() => {
