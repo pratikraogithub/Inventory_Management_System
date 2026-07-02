@@ -12,12 +12,15 @@ export default function LoginForm() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        console.log("Sending credentials:", credentials); // ADD THIS
         try {
             const res = await api.post('token/', credentials);
+            console.log("Response:", res.data);
             localStorage.setItem('access', res.data.access);
             localStorage.setItem('refresh', res.data.refresh);
             navigate("/dashboard");
         } catch (err) {
+            console.log("Error response:", err.response?.data);
             setError("Invalid username or password. Please try again.");
         }
     };
